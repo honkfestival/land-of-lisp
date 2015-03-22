@@ -1,3 +1,8 @@
 *.FASL
 *.fasl
+*.fas
+*.lib
 *.lisp-temp
+
+*.dot
+*.png
