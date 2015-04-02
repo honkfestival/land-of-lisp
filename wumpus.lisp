@@ -3,6 +3,7 @@
 (defparameter *congestion-city-nodes* nil)
 (defparameter *congestion-city-edges* nil)
 (defparameter *visited-nodes* nil)
+(defparameter *player-pos* nil)
 (defparameter *node-num* 30)
 (defparameter *edge-num* 45)
 (defparameter *worm-num* 3)
@@ -49,7 +50,7 @@
 (defun connect-with-bridges (islands)
   (when (cdr islands)
     (append (edge-pair (caar islands) (caadr islands))
-	    (connect-width-bridges (cdr islands)))))
+	    (connect-with-bridges (cdr islands)))))
 
 (defun connect-all-islands (nodes edge-list)
   (append (connect-with-bridges (find-islands nodes edge-list)) edge-list))
@@ -114,3 +115,20 @@
 				      glow-worms)
 				'(lights!)))
 			 (when (some #'cdr (cdr (assoc n edge-alist))) '(sirens!))))))
+
+(defun find-empty-node()
+  (let ((x (random-node)))
+    (if (cdr (assoc x *congestion-city-nodes*))
+	(find-empty-node)
+	x)))
+
+(defun new-game ()
+  (setf *congestion-city-edges* (make-city-edges))
+  (setf *congestion-city-nodes* (make-city-nodes *congestion-city-edges*))
+  (setf *player-pos* (find-empty-node))
+  (setf *visited-nodes* (list *player-pos*))
+  (draw-city))
+
+(defun draw-city ()
+  (ugraph->png "city.dot" *congestion-city-nodes* *congestion-city-edges*))
+
